@@ -5622,7 +5622,7 @@ function tgPlain(html){
   return String(html||'').replace(/<a [^>]*href="([^"]*)"[^>]*>(.*?)<\/a>/gi,'$2: $1').replace(/<[^>]+>/g,'')
     .replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&');
 }
-async function sendTelegramPhotoEx(token, chatId, imageDataUrl, caption, threadId){
+async function sendTelegramPhotoEx(token, chatId, imageDataUrl, caption, threadId, replyMarkup){
   token = tgNormToken(token);
   if(!token || !chatId) return {ok:false, description:'Нет токена или chat_id'};
   let last = null;
@@ -5631,6 +5631,7 @@ async function sendTelegramPhotoEx(token, chatId, imageDataUrl, caption, threadI
     form.append('chat_id', chatId);
     if(threadId) form.append('message_thread_id', String(threadId));
     form.append('caption', cap.slice(0,1024));
+    if(replyMarkup) form.append('reply_markup', JSON.stringify(replyMarkup));
     if(html) form.append('parse_mode','HTML');
     if(typeof photoVal==='string') form.append('photo', photoVal); else form.append('photo', photoVal, 'product.jpg');
     return tgCall(token,'sendPhoto',form,true);
@@ -5653,6 +5654,7 @@ async function sendTelegramPhotoEx(token, chatId, imageDataUrl, caption, threadI
   }
   // 4) запасной вариант — текст без фото, чтобы товар всё равно попал в канал
   const base = threadId ? {chat_id:chatId, message_thread_id:Number(threadId)} : {chat_id:chatId};
+  if(replyMarkup) base.reply_markup = replyMarkup;
   let r = await tgCall(token,'sendMessage',Object.assign({text:caption.slice(0,4096), parse_mode:'HTML'}, base));
   if(!r.ok && /parse entities|can't parse/i.test(r.description||''))
     r = await tgCall(token,'sendMessage',Object.assign({text:tgPlain(caption).slice(0,4096)}, base));
@@ -5678,6 +5680,22 @@ async function sendTelegramDocument(token, chatId, fileDataUrl, fileName, captio
     if(!res.ok){ console.warn('Telegram sendDocument failed for', chatId, await res.text().catch(()=>'')); }
     return res.ok;
   }catch(e){ console.warn('Telegram document error', e); return false; }
+}
+/* Ссылка «Заказать»: открывает приложение → чат с админом по этому товару (?order=ID) */
+function getProductOrderUrl(pid){
+  const u = new URL(getProductUrl(pid));
+  u.searchParams.delete('product');
+  u.searchParams.set('order', pid);
+  return u.toString();
+}
+/* Две кнопки под постом в канале/группе: «Посмотреть на сайте» и «Заказать» */
+function buildProductPostButtons(p){
+  const view = getProductUrl(p.id), order = getProductOrderUrl(p.id);
+  if(!/^https?:/i.test(view)) return null;
+  return {inline_keyboard:[[
+    {text:'🔍 Посмотреть на сайте', url:view},
+    {text:'🛒 Заказать', url:order}
+  ]]};
 }
 function buildProductTelegramCaption(p, limit){
   limit = limit || 1024;
@@ -5787,10 +5805,11 @@ async function publishProductToTelegram(p){
   }
   const photo = (p.images && p.images[0]) || null;
   const caption = buildProductTelegramCaption(p, photo ? 1024 : 4096);
+  const markup = buildProductPostButtons(p);
   const failedTargets = [], errors = [];
   let anyOk = false;
   for(const t of targets){
-    const r = await sendTelegramPhotoEx(token, t.chatId, photo, caption, t.threadId);
+    const r = await sendTelegramPhotoEx(token, t.chatId, photo, caption, t.threadId, markup);
     if(r.ok) anyOk = true; else { failedTargets.push(t.label); errors.push(`${t.label}: ${tgHumanError(r.description)}`); console.warn('Publish failed', t, r.description); }
   }
   return {ok:anyOk, anyOk, failedTargets, errors};
@@ -8667,6 +8686,30 @@ function checkReferralInUrl(){
 checkReferralInUrl();
 function checkSharedProductInUrl(){
   try{ checkSharedCartInUrl(); }catch(e){}
+  // ?order=ID — кнопка «Заказать» из поста в Telegram: открываем чат с админом, товар прикреплён
+  try{
+    const oid = new URLSearchParams(window.location.search).get('order');
+    if(oid && !State._sharedOrderHandled){
+      State._sharedOrderHandled = true;
+      let authShown = false;
+      const tryOrder = ()=>{
+        const prod = (State.products||[]).find(pp=>pp.id===oid);
+        if(!prod){ setTimeout(tryOrder, 400); return; }
+        if(!State.user){
+          if(!authShown){ authShown = true; openOv('ovAuthChoice'); }
+          setTimeout(tryOrder, 800); return;
+        }
+        closeAllOverlays();
+        openChatThread('admin', 'KORVON.SHOP', prod.id, String(prod.name||'').slice(0,140));
+        const inp = $('#chatInputMsg');
+        if(inp){
+          inp.value = 'Здравствуйте! Хочу заказать: ' + String(prod.name||'') + (prod.articul ? ' (арт. '+prod.articul+')' : '');
+          inp.dispatchEvent(new Event('input', {bubbles:true}));
+        }
+      };
+      tryOrder();
+    }
+  }catch(e){ console.warn('order param failed', e); }
   // Только один раз при запуске. Раньше функция вызывалась при каждом обновлении списка товаров из базы
   // (а оно приходит после любого добавления в корзину/заказа) и заново открывала товар из адреса.
   if(State._sharedProductHandled) return;
