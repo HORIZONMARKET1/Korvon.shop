@@ -6751,7 +6751,6 @@ function loadingStateHtml(){
     <div class="loading-orb"><i class="fa-solid fa-bag-shopping"></i></div>
     <div class="loading-title">Не удалось загрузить товары</div>
     <div class="loading-sub">Проверьте интернет и попробуйте ещё раз</div>
-    ${State.productsLastError ? `<div class="loading-sub" style="margin-top:8px;font-size:11.5px;opacity:.75;">Код ошибки: ${String(State.productsLastError).replace(/[<>&]/g,'')}</div>` : ''}
     <button type="button" class="loading-retry" data-retry-products="1"><i class="fa-solid fa-rotate-right"></i> Повторить</button>
   </div>`;
   }
@@ -17312,7 +17311,6 @@ function hzListenProducts(){
   try{ if(hzProductsUnsub) hzProductsUnsub(); }catch(e){}
   hzProductsUnsub = db.collection('products').onSnapshot(hzOnProductsSnap, (err)=>{
     console.warn('products listener error', err);
-    State.productsLastError = (err && (err.code||err.message)) || 'listener';
     // Слушатель упал (сеть/права) — пробуем разовый запрос напрямую с сервера
     hzFetchProductsOnce();
   });
@@ -17323,42 +17321,10 @@ function hzFetchProductsOnce(){
     if(State.firstProductsLoad || snap.docs.length) hzOnProductsSnap(snap);
   }).catch(err=>{
     console.warn('products one-shot fetch failed', err);
-    State.productsLastError = (err && (err.code||err.message)) || 'fetch';
-    // Последний запасной путь — обычный HTTPS-запрос к Firestore REST (работает там, где SDK не может соединиться)
-    return hzFetchProductsRest();
+    return db.collection('products').get().then(snap=>{
+      if(State.firstProductsLoad && (snap.docs.length || !snap.metadata.fromCache)) hzOnProductsSnap(snap);
+    }).catch(()=>{});
   });
-}
-function hzFsVal(v){
-  if(!v) return null;
-  if('stringValue' in v) return v.stringValue;
-  if('integerValue' in v) return Number(v.integerValue);
-  if('doubleValue' in v) return Number(v.doubleValue);
-  if('booleanValue' in v) return v.booleanValue;
-  if('nullValue' in v) return null;
-  if('timestampValue' in v){ const ms = Date.parse(v.timestampValue)||0; return {seconds:Math.floor(ms/1000), nanoseconds:0, toMillis:()=>ms, toDate:()=>new Date(ms)}; }
-  if('arrayValue' in v) return (v.arrayValue.values||[]).map(hzFsVal);
-  if('mapValue' in v) return hzFsFields(v.mapValue.fields||{});
-  if('geoPointValue' in v) return v.geoPointValue;
-  if('referenceValue' in v) return v.referenceValue;
-  return null;
-}
-function hzFsFields(f){ const o={}; Object.keys(f).forEach(k=>{ o[k]=hzFsVal(f[k]); }); return o; }
-async function hzFetchProductsRest(){
-  try{
-    const cfg = (window.HZ && window.HZ.firebaseConfig) || {};
-    if(!cfg.projectId || !cfg.apiKey) return;
-    const docs = []; let tok = '';
-    for(let i=0;i<30;i++){
-      const url = `https://firestore.googleapis.com/v1/projects/${cfg.projectId}/databases/(default)/documents/products?pageSize=300&key=${cfg.apiKey}` + (tok ? '&pageToken='+encodeURIComponent(tok) : '');
-      const ctl = new AbortController(); const t = setTimeout(()=>ctl.abort(), 15000);
-      const r = await fetch(url, {signal: ctl.signal}); clearTimeout(t);
-      const j = await r.json();
-      if(!r.ok){ State.productsLastError = (j && j.error && (j.error.status||j.error.message)) || ('HTTP '+r.status); return; }
-      (j.documents||[]).forEach(d=>{ const f = hzFsFields(d.fields||{}); docs.push({id:d.name.split('/').pop(), data:()=>f}); });
-      tok = j.nextPageToken || ''; if(!tok) break;
-    }
-    if(State.firstProductsLoad) hzOnProductsSnap({docs, metadata:{fromCache:false}});
-  }catch(e){ State.productsLastError = (e && (e.name||e.message)) || 'rest'; console.warn('products REST fetch failed', e); }
 }
 function hzRetryProducts(){
   State.productsLoadFailed = false;
