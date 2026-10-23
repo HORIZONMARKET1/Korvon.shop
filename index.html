@@ -8031,7 +8031,7 @@ $('#coSubmitBtn').addEventListener('click', async ()=>{
     if(String(e.message||'').startsWith('STOCK_SHORTAGE:')){
       toast('Недостаточно товара на складе', e.message.replace('STOCK_SHORTAGE:',''), 'fa-circle-exclamation');
     } else {
-      toast('Не удалось оформить заказ', 'Проверьте подключение и попробуйте снова', 'fa-circle-exclamation');
+      toast('Не удалось оформить заказ', 'Причина: ' + ((e && (e.code || e.message)) ? String(e.code || e.message).slice(0,120) : 'неизвестно') + ' — проверьте подключение и попробуйте снова', 'fa-circle-exclamation');
     }
     return; // stop here: don't clear the cart or claim success if the order was never saved
   }
