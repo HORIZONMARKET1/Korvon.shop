@@ -1,5 +1,5 @@
 <html lang="ru"><head>
-<link rel="preconnect" href="https://firebasestorage.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://firebasestorage.googleapis.com" crossorigin="">
 <link rel="dns-prefetch" href="https://firebasestorage.googleapis.com">
 <meta charset="UTF-8">
 <meta name="hz-build" content="20261011-1111">
@@ -2737,22 +2737,22 @@ body:not([data-theme="dark"]) .ss-avatar > *{background:linear-gradient(145deg,#
   <div class="sheet vf-card" id="vfCard">
     <button class="vf-x" data-close="ovRegVerify" aria-label="Закрыть"><i class="fa-solid fa-xmark"></i></button>
     <div class="vf-handle"></div>
-    <div class="vf-lock"><span class="vf-lock-in"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><g class="vf-shk"><path d="M8 11V8a4 4 0 0 1 8 0v3"/></g><rect x="5" y="11" width="14" height="9.5" rx="2.6"/></svg></span></div>
+    <div class="vf-lock"><span class="vf-lock-in"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><g class="vf-shk"><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></g><rect x="5" y="11" width="14" height="9.5" rx="2.6"></rect></svg></span></div>
     <h2 class="vf-title" id="vfTitle">Подтвердите номер</h2>
     <p class="vf-sub" id="vfSub">Мы отправили код в Telegram.<br>Подтверждение произойдёт сразу после ввода.</p>
-    <div class="vf-boxes" id="vfBoxes"><div class="vf-box"><span class="vf-d"></span></div><i class="vf-link"></i><div class="vf-box"><span class="vf-d"></span></div><i class="vf-link"></i><div class="vf-box"><span class="vf-d"></span></div><i class="vf-link"></i><div class="vf-box"><span class="vf-d"></span></div><i class="vf-link"></i><div class="vf-box"><span class="vf-d"></span></div><i class="vf-link"></i><div class="vf-box"><span class="vf-d"></span></div>
+    <div class="vf-boxes" id="vfBoxes"><div class="vf-box on"><span class="vf-d"></span></div><i class="vf-link"></i><div class="vf-box"><span class="vf-d"></span></div><i class="vf-link"></i><div class="vf-box"><span class="vf-d"></span></div><i class="vf-link"></i><div class="vf-box"><span class="vf-d"></span></div><i class="vf-link"></i><div class="vf-box"><span class="vf-d"></span></div><i class="vf-link"></i><div class="vf-box"><span class="vf-d"></span></div>
       <input id="regVerifyCodeInput" class="vf-input" inputmode="numeric" autocomplete="one-time-code" maxlength="6" aria-label="Код из Telegram">
     </div>
-    <div class="vf-bar"><i id="vfBarFill"></i></div>
+    <div class="vf-bar"><i id="vfBarFill" style="width: 0%;"></i></div>
     <div class="vf-done">
       <div class="vf-ring"><span class="vf-spin"></span>
-        <svg class="vf-chk" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="32" cy="32" r="29"/><path d="M20 33l8 8 16-17"/></svg></div>
+        <svg class="vf-chk" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="32" cy="32" r="29"></circle><path d="M20 33l8 8 16-17"></path></svg></div>
       <div class="vf-secure"><i class="fa-solid fa-lock"></i> Подтверждено и защищено</div>
     </div>
     <p id="regVerifyStatus" class="vf-status"></p>
     <button class="vf-tg" id="regVerifyOpenBotBtn"><i class="fa-brands fa-telegram"></i> Открыть Telegram и получить код</button>
     <div class="vf-resend">Не получили код? <button id="regVerifyResendBtn" class="vf-rbtn" disabled="">Отправить снова</button> <span id="regVerifyTimer"></span></div>
-    <button id="regVerifyConfirmBtn" disabled="" hidden>Подтвердить</button>
+    <button id="regVerifyConfirmBtn" disabled="" hidden="">Подтвердить</button>
     <div class="vf-foot"><i class="fa-solid fa-shield-halved"></i> Защищено сквозным шифрованием</div>
   </div>
 </div>
@@ -2763,22 +2763,22 @@ body:not([data-theme="dark"]) .ss-avatar > *{background:linear-gradient(145deg,#
     <div class="cr-stage">
       <div class="cr-glow"></div>
       <div class="cr-db"><span class="cr-pulse"></span>
-        <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="32" cy="14" rx="20" ry="7"/><path d="M12 14v14c0 3.9 9 7 20 7s20-3.1 20-7V14"/><path d="M12 28v14c0 3.9 9 7 20 7s20-3.1 20-7V28"/><path d="M12 42v8c0 3.9 9 7 20 7s20-3.1 20-7v-8"/></svg></div>
+        <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="32" cy="14" rx="20" ry="7"></ellipse><path d="M12 14v14c0 3.9 9 7 20 7s20-3.1 20-7V14"></path><path d="M12 28v14c0 3.9 9 7 20 7s20-3.1 20-7V28"></path><path d="M12 42v8c0 3.9 9 7 20 7s20-3.1 20-7v-8"></path></svg></div>
       <div class="cr-doc" id="crDoc">
         <div class="cr-tag">users · client</div>
         <div class="cr-row"><span class="cr-av" id="crAv"></span><div class="cr-who"><b id="crDocName"></b><small id="crDocPhone"></small></div></div>
         <i class="cr-ln" style="width:100%"></i><i class="cr-ln" style="width:78%"></i><i class="cr-ln" style="width:56%"></i>
         <span class="cr-scan"></span>
       </div>
-      <div class="cr-okring"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="32" cy="32" r="29"/><path d="M20 33l8 8 16-17"/></svg></div>
+      <div class="cr-okring"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="32" cy="32" r="29"></circle><path d="M20 33l8 8 16-17"></path></svg></div>
       <div class="cr-burst"><i style="--a:0deg"></i><i style="--a:30deg"></i><i style="--a:60deg"></i><i style="--a:90deg"></i><i style="--a:120deg"></i><i style="--a:150deg"></i><i style="--a:180deg"></i><i style="--a:210deg"></i><i style="--a:240deg"></i><i style="--a:270deg"></i><i style="--a:300deg"></i><i style="--a:330deg"></i></div>
     </div>
     <h2 class="cr-title" id="crTitle">Создаём ваш профиль</h2>
     <p class="cr-sub" id="crSub">Ваши данные станут документом и отправятся в базу</p>
-    <div class="cr-bonus" id="crBonus" hidden></div>
+    <div class="cr-bonus" id="crBonus" hidden=""></div>
     <ul class="cr-steps"><li><i></i>Собираем данные</li><li><i></i>Формируем документ</li><li><i></i>Отправляем в базу</li></ul>
     <div class="cr-net"><i class="fa-solid fa-wifi"></i><span>Слабое соединение — повторяем…</span></div>
-    <button class="cr-cancel" id="crCancel" hidden>Закрыть</button>
+    <button class="cr-cancel" id="crCancel" hidden="">Закрыть</button>
   </div>
 </div>
 
@@ -3093,9 +3093,7 @@ body:not([data-theme="dark"]) .ss-avatar > *{background:linear-gradient(145deg,#
       <button class="btn btn-primary" id="pushEnableBtn" style="width:auto;padding:8px 14px;font-size:12.5px;white-space:nowrap;">Включить</button>
     </div>
     <button id="pushDiagBtn" style="display:none;align-items:center;gap:6px;justify-content:center;width:100%;padding:8px;margin-bottom:12px;border-radius:10px;background:none;border:1.5px dashed var(--border);color:var(--text-dim);font-size:11.5px;"><i class="fa-solid fa-stethoscope"></i> Диагностика push</button>
-    <button class="btn btn-outline notif-clear-btn" id="notifClearAllBtn" style="display:none;margin-bottom:12px;">
-      <i class="fa-solid fa-trash-can"></i> Очистить все уведомления
-    </button>
+    <button class="btn btn-outline notif-clear-btn hz-del" id="notifClearAllBtn" style="display:none;margin-bottom:12px;"><span class="hz-del-ico"><svg viewBox="0 0 24 24"><g class="hz-lid"><path d="M4 7h16"></path><path d="M9.5 7V5.2c0-.7.5-1.2 1.2-1.2h2.6c.7 0 1.2.5 1.2 1.2V7"></path></g><path d="M6 7l.9 12.2c.1 1 .9 1.8 1.9 1.8h6.4c1 0 1.8-.8 1.9-1.8L18 7"></path><path d="M10 11v6M14 11v6"></path></svg></span><span class="hz-del-t">Очистить все уведомления</span></button>
     <div id="notifListBody"></div>
   </div>
 </div>
@@ -3212,7 +3210,7 @@ body:not([data-theme="dark"]) .ss-avatar > *{background:linear-gradient(145deg,#
     <div class="sheet-handle"></div>
     <div class="sheet-title">История заказов <button class="close-x" data-close="ovOrders"><i class="fa-solid fa-xmark"></i></button></div>
     <button class="btn btn-outline" id="ordersExportBtn" style="display:none;margin-bottom:10px;"><i class="fa-solid fa-file-export"></i> Экспорт в CSV</button>
-    <button class="btn btn-outline" id="ordersClearAllBtn" style="display:none;color:var(--danger);border-color:var(--danger);margin-bottom:12px;"><i class="fa-solid fa-trash-can"></i> Очистить историю заказов</button>
+    <button class="btn btn-outline hz-del" id="ordersClearAllBtn" style="display:none;color:var(--danger);border-color:var(--danger);margin-bottom:12px;"><span class="hz-del-ico"><svg viewBox="0 0 24 24"><g class="hz-lid"><path d="M4 7h16"></path><path d="M9.5 7V5.2c0-.7.5-1.2 1.2-1.2h2.6c.7 0 1.2.5 1.2 1.2V7"></path></g><path d="M6 7l.9 12.2c.1 1 .9 1.8 1.9 1.8h6.4c1 0 1.8-.8 1.9-1.8L18 7"></path><path d="M10 11v6M14 11v6"></path></svg></span><span class="hz-del-t">Очистить историю заказов</span></button>
     <div id="ordersBody"></div>
   </div>
 </div>
@@ -3311,7 +3309,7 @@ body:not([data-theme="dark"]) .ss-avatar > *{background:linear-gradient(145deg,#
 <div class="overlay center" id="ovPublishProducts">
   <div class="sheet" style="border-radius:24px;max-height:88vh;">
     <div class="sheet-title">Публикация товаров <button class="close-x" data-close="ovPublishProducts"><i class="fa-solid fa-xmark"></i></button></div>
-    <p style="color:var(--text-dim);font-size:12px;margin-top:-8px;">Отметьте товары и нажмите «Опубликовать» — карточки с фото, названием, артикулом, ценой и ссылкой на товар уйдут в канал и/или бот, настроенные в Профиль → Telegram-бот → «Бот для публикации товаров».</p>
+    <p style="color:var(--text-dim);font-size:12px;margin-top:-8px;">Отметьте товары и нажмите «Опубликовать» — карточки с фото, названием, артикулом, ценой и ссылкой на товар уйдут в канал и/или бот, настроенные в Профиль → Telegram-бот → «Бот для публикации товаров», а также в тему группы, привязанную к каталогу товара (Админка → Каталоги).</p>
     <div class="field-row" style="gap:8px;">
       <div class="field" style="margin-bottom:0;"><label>Каталог</label><select id="ppCatalog"><option value="">Все каталоги</option></select></div>
       <div class="field" style="margin-bottom:0;"><label>Подкаталог</label><select id="ppSubcatalog"><option value="">Все подкаталоги</option></select></div>
@@ -3564,7 +3562,7 @@ body:not([data-theme="dark"]) .ss-avatar > *{background:linear-gradient(145deg,#
       <button class="btn btn-outline" data-me="cat">Перенести в этот каталог</button></div>
     <div class="me-block"><h4><i class="fa-solid fa-percent"></i> Наценка / скидка на цену</h4>
       <div class="field"><input id="mePct" type="number" step="0.5" placeholder="Например: 15 (наценка) или -10 (снизить)"></div>
-      <label class="me-chk"><input type="checkbox" id="meRound" checked> Округлять до целого</label>
+      <label class="me-chk"><input type="checkbox" id="meRound" checked=""> Округлять до целого</label>
       <button class="btn btn-outline" data-me="markup">Применить к цене</button></div>
     <div class="me-block"><h4><i class="fa-solid fa-boxes-stacked"></i> Наличие</h4>
       <div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="btn btn-outline" style="flex:1;min-width:130px;" data-me="instock">В наличии</button><button class="btn btn-outline" style="flex:1;min-width:130px;" data-me="outstock">Нет в наличии</button></div>
@@ -3713,8 +3711,8 @@ Xiaomi Redmi Note 13"></textarea></div>
   <p style="color:var(--text-dim);font-size:12.5px;margin:-6px 0 12px;">Сфотографируйте старое устройство или вещь — ИИ даст ориентировочную цену. Итог подтвердит магазин после осмотра, сумма придёт бонусами на ваш счёт.</p>
   <div id="tiProdLine" style="font-size:12.5px;font-weight:600;margin-bottom:8px;"></div>
   <div class="field"><label>Что сдаёте</label><input id="tiTitle" placeholder="Например: iPhone 11, 64 ГБ" maxlength="80"></div>
-  <div class="field"><label>Состояние</label><select id="tiCond"><option value="Отличное">Отличное, как новое</option><option value="Хорошее" selected>Хорошее, есть следы использования</option><option value="С дефектами">С дефектами (царапины, сколы)</option><option value="Не работает">Не работает / на запчасти</option></select></div>
-  <div class="field"><label>Фото (до 3 шт.)</label><div class="ti-photos" id="tiPhotos"></div><input type="file" accept="image/*" multiple class="hidden" id="tiPhotoInput"></div>
+  <div class="field"><label>Состояние</label><select id="tiCond"><option value="Отличное">Отличное, как новое</option><option value="Хорошее" selected="">Хорошее, есть следы использования</option><option value="С дефектами">С дефектами (царапины, сколы)</option><option value="Не работает">Не работает / на запчасти</option></select></div>
+  <div class="field"><label>Фото (до 3 шт.)</label><div class="ti-photos" id="tiPhotos"></div><input type="file" accept="image/*" multiple="" class="hidden" id="tiPhotoInput"></div>
   <div id="tiResult"></div>
   <button class="btn btn-outline" id="tiAiBtn" style="margin-bottom:8px;"><i class="fa-solid fa-wand-magic-sparkles"></i> Оценить по фото</button>
   <button class="btn btn-primary" id="tiSendBtn"><i class="fa-solid fa-paper-plane"></i> Отправить заявку</button>
@@ -5570,31 +5568,101 @@ function syncSiteUrl(){
   }catch(e){}
 }
 function getProductUrl(pid){
-  const url = new URL(window.location.href);
+  let href = window.location.href;
+  // Telegram не принимает не-http(s) ссылки (file://, capacitor://…) — берём сохранённый адрес сайта
+  if(!/^https?:/i.test(href) || /localhost|127\.0\.0\.1/.test(href)) href = (State.settings && State.settings.siteUrl) || href;
+  const url = new URL(href);
   url.search = ''; url.hash = '';
   url.searchParams.set('product', pid);
   return url.toString();
 }
+/* ===== Надёжная отправка в Telegram с реальной диагностикой ошибок ===== */
+const _sleep = ms => new Promise(r=>setTimeout(r,ms));
+function tgNormToken(t){ return String(t||'').trim().replace(/^bot/i,'').replace(/\s+/g,''); }
+function tgNormChat(c, isChannel){
+  c = String(c||'').trim().replace(/\s+/g,'');
+  c = c.replace(/^https?:\/\/(www\.)?t\.me\//i,'').replace(/^\/+/,'');
+  if(!c) return '';
+  if(/^-?\d+$/.test(c)){
+    if(isChannel && !c.startsWith('-')) return '-100'+c;   // ID канала всегда отрицательный (-100…)
+    return c;
+  }
+  return c.startsWith('@') ? c : '@'+c;
+}
+/* Единый вызов Bot API: {ok, result|description, code}. При 429 (лимит Telegram) ждёт и повторяет. */
+async function tgCall(token, method, payload, isForm){
+  for(let attempt=0; attempt<3; attempt++){
+    try{
+      const res = await fetch(`https://api.telegram.org/bot${token}/${method}`, isForm
+        ? {method:'POST', body: payload}
+        : {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload||{})});
+      let j = null; try{ j = await res.json(); }catch(e){}
+      if(j && j.ok) return {ok:true, result:j.result};
+      const retry = j && j.parameters && j.parameters.retry_after;
+      if(res.status===429 && retry && attempt<2){ await _sleep((retry+1)*1000); continue; }
+      return {ok:false, code:(j&&j.error_code)||res.status, description:(j&&j.description)||('HTTP '+res.status)};
+    }catch(e){
+      return {ok:false, code:0, description:'Сеть: '+(e&&e.message||e)};
+    }
+  }
+  return {ok:false, code:429, description:'Too Many Requests'};
+}
+function tgHumanError(d){
+  d = String(d||'');
+  if(/thread not found/i.test(d)) return 'Тема не найдена — проверьте ссылку на тему у каталога (правой кнопкой на тему → «Копировать ссылку»)';
+  if(/chat not found/i.test(d)) return 'Чат/канал не найден — проверьте ID канала (приватный: -100…, публичный: @имя)';
+  if(/unauthorized/i.test(d)) return 'Неверный токен бота (Unauthorized)';
+  if(/not enough rights|have no rights|administrator rights|CHAT_WRITE_FORBIDDEN|need administrator/i.test(d)) return 'У бота нет прав — добавьте его администратором канала с правом «Публикация сообщений»';
+  if(/not a member|was kicked/i.test(d)) return 'Бот не добавлен в канал/чат';
+  if(/can't initiate conversation|forbidden/i.test(d)) return 'Бот не может писать в этот чат — для личного чата сначала нажмите «Старт» у бота';
+  if(/^Сеть/.test(d)) return d+' (нет интернета или блокировка api.telegram.org)';
+  return d;
+}
+function tgPlain(html){
+  return String(html||'').replace(/<a [^>]*href="([^"]*)"[^>]*>(.*?)<\/a>/gi,'$2: $1').replace(/<[^>]+>/g,'')
+    .replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&');
+}
+async function sendTelegramPhotoEx(token, chatId, imageDataUrl, caption, threadId){
+  token = tgNormToken(token);
+  if(!token || !chatId) return {ok:false, description:'Нет токена или chat_id'};
+  let last = null;
+  const trySend = async (photoVal, cap, html)=>{
+    const form = new FormData();
+    form.append('chat_id', chatId);
+    if(threadId) form.append('message_thread_id', String(threadId));
+    form.append('caption', cap.slice(0,1024));
+    if(html) form.append('parse_mode','HTML');
+    if(typeof photoVal==='string') form.append('photo', photoVal); else form.append('photo', photoVal, 'product.jpg');
+    return tgCall(token,'sendPhoto',form,true);
+  };
+  if(imageDataUrl){
+    let photoVal = imageDataUrl;
+    if(imageDataUrl.startsWith('data:')){ try{ photoVal = dataUrlToBlob(imageDataUrl); }catch(e){ photoVal = null; } }
+    if(photoVal){
+      last = await trySend(photoVal, caption, true);                       // 1) фото + HTML-подпись
+      if(last.ok) return last;
+      if(/parse entities|can't parse/i.test(last.description||'')){        // 2) без разметки
+        last = await trySend(photoVal, tgPlain(caption), false);
+        if(last.ok) return last;
+      }
+      if(typeof photoVal==='string' && /^https?:/i.test(photoVal)){        // 3) Telegram не скачал ссылку — грузим файлом сами
+        try{ const r = await fetch(photoVal); if(r.ok){ last = await trySend(await r.blob(), caption, true); if(last.ok) return last; } }catch(e){}
+      }
+      if(/chat not found|unauthorized|rights|forbidden|kicked|not a member|thread not found/i.test(last.description||'')) return last;
+    }
+  }
+  // 4) запасной вариант — текст без фото, чтобы товар всё равно попал в канал
+  const base = threadId ? {chat_id:chatId, message_thread_id:Number(threadId)} : {chat_id:chatId};
+  let r = await tgCall(token,'sendMessage',Object.assign({text:caption.slice(0,4096), parse_mode:'HTML'}, base));
+  if(!r.ok && /parse entities|can't parse/i.test(r.description||''))
+    r = await tgCall(token,'sendMessage',Object.assign({text:tgPlain(caption).slice(0,4096)}, base));
+  return r;
+}
 async function sendTelegramPhoto(token, chatId, imageDataUrl, caption){
   if(!token || !chatId) return false;
-  try{
-    if(imageDataUrl){
-      const form = new FormData();
-      form.append('chat_id', chatId);
-      form.append('caption', caption.slice(0,1024));
-      form.append('parse_mode', 'HTML');
-      if(imageDataUrl.startsWith('data:')){
-        form.append('photo', dataUrlToBlob(imageDataUrl), 'product.jpg');
-      } else {
-        form.append('photo', imageDataUrl); // уже готовая https-ссылка
-      }
-      const res = await fetch(`https://api.telegram.org/bot${token}/sendPhoto`, {method:'POST', body: form});
-      if(!res.ok){ console.warn('Telegram sendPhoto failed for', chatId, await res.text().catch(()=>'')); }
-      return res.ok;
-    } else {
-      return await sendTelegram(token, chatId, caption.slice(0,4096));
-    }
-  }catch(e){ console.warn('Telegram photo error', e); return false; }
+  const r = await sendTelegramPhotoEx(token, chatId, imageDataUrl, caption);
+  if(!r.ok) console.warn('Telegram sendPhoto failed for', chatId, r.description);
+  return r.ok;
 }
 /* Отправка файла (документа, например PDF гарантийного талона) в Telegram —
    тот же принцип, что и sendTelegramPhoto, но методом sendDocument. */
@@ -5630,7 +5698,7 @@ function buildProductTelegramCaption(p, limit){
     priceLine,
     p.articul ? `Артикул: ${escapeHtmlTg(p.articul)}` : '',
     '',
-    `🔗 <a href="${getProductUrl(p.id)}">Подробно на нашем сайте</a>`,
+    (/^https?:/i.test(getProductUrl(p.id)) ? `🔗 <a href="${escapeHtmlTg(getProductUrl(p.id))}">Подробно на нашем сайте</a>` : ''),
     '',
     '🛍 KORVON.SHOP'
   ].filter((l,i)=>i===1 || i===4 || i===6 || l!=='');
@@ -5639,26 +5707,90 @@ function buildProductTelegramCaption(p, limit){
   return caption;
 }
 /* Публикует товар в Telegram-канал и/или в чат бота, настроенных отдельно для публикации товаров
-   (Профиль → Telegram-бот → «Бот для публикации товаров»). Возвращает диагностику успеха по каждой цели,
-   чтобы можно было понять, ПОЧЕМУ публикация в канал не прошла (например, бот не добавлен админом канала). */
-async function publishProductToTelegram(p){
-  const token = State.settings.productsBotToken;
-  const channelId = (State.settings.productsChannelId||'').trim();
-  const botChatId = (State.settings.productsBotChatId||'').trim();
-  if(!token) return {ok:false, reason:'no-token'}; // бот публикации товаров ещё не настроен
+   (Профиль → Telegram-бот → «Бот для публикации товаров»). Возвращает диагностику по каждой цели
+   (с текстом ошибки Telegram), чтобы было видно, ПОЧЕМУ публикация не прошла. */
+/* Ссылка на тему группы → {chatId, threadId}.
+   Форматы: https://t.me/c/1234567890/5 (приватная группа), https://t.me/c/1234567890/5/77 (со ссылкой на сообщение),
+   https://t.me/mygroup/5 (публичная группа). Тема «Общее» (id 1) = без message_thread_id. */
+function parseTopicLink(link){
+  let s = String(link||'').trim().replace(/[?#].*$/,'').replace(/\/+$/,'');
+  s = s.replace(/^https?:\/\/(www\.)?(t|telegram)\.me\//i,'').replace(/^\/+/,'');
+  if(!s) return null;
+  let m = s.match(/^c\/(\d+)\/(\d+)(?:\/\d+)?$/i);
+  if(m) return {chatId:'-100'+m[1], threadId: m[2]==='1' ? null : m[2]};
+  m = s.match(/^c\/(\d+)$/i);
+  if(m) return {chatId:'-100'+m[1], threadId:null};
+  m = s.match(/^([A-Za-z][\w]{3,})\/(\d+)(?:\/\d+)?$/);
+  if(m) return {chatId:'@'+m[1], threadId: m[2]==='1' ? null : m[2]};
+  return null;
+}
+function getPublishTargets(p){
+  const channelId = tgNormChat(State.settings.productsChannelId, true);
+  const botChatId = tgNormChat(State.settings.productsBotChatId, false);
   const targets = [];
   if(channelId) targets.push({label:'Канал', chatId: channelId});
   if(botChatId) targets.push({label:'Бот', chatId: botChatId});
-  if(targets.length===0) return {ok:false, reason:'no-targets'}; // ни канал, ни чат бота не указаны
+  // Тема группы, назначенная каталогу товара (Админка → Каталоги → поле «Тема Telegram»)
+  if(p){
+    const cat = (State.catalogs||[]).find(c=>c.id===p.catalogId);
+    const tp = cat && parseTopicLink(cat.tgTopicLink);
+    if(tp) targets.push({label:'Тема «'+cat.name+'»', chatId:tp.chatId, threadId:tp.threadId, isTopic:true});
+  }
+  return targets;
+}
+/* Проверка ДО массовой публикации: токен валиден? бот видит каналы/группы и может там писать?
+   Проверяются все получатели, нужные выбранным товарам (каждый чат — один раз). */
+async function checkPublishSetup(products){
+  const token = tgNormToken(State.settings.productsBotToken);
+  if(!token) return {ok:false, message:'Не указан токен бота публикации'};
+  const seen = new Map(); const noTarget = new Set();
+  (products||[]).forEach(p=>{
+    const tg = getPublishTargets(p);
+    if(!tg.length){ const c=(State.catalogs||[]).find(x=>x.id===p.catalogId); noTarget.add(c?c.name:'без каталога'); }
+    tg.forEach(x=>{ if(!seen.has(x.chatId)) seen.set(x.chatId, x); });
+  });
+  if(!seen.size) return {ok:false, message:'Нет получателей: у каталогов нет ссылки на тему, а канал/чат бота не указаны'};
+  const me = await tgCall(token,'getMe',{});
+  if(!me.ok) return {ok:false, message:tgHumanError(me.description)};
+  const problems = [];
+  for(const t of seen.values()){
+    const c = await tgCall(token,'getChat',{chat_id:t.chatId});
+    if(!c.ok){ problems.push(`${t.label}: ${tgHumanError(c.description)}`); continue; }
+    const type = c.result && c.result.type;
+    if(type==='channel' || type==='supergroup'){
+      const m = await tgCall(token,'getChatMember',{chat_id:t.chatId, user_id:me.result.id});
+      if(m.ok){
+        const st = m.result.status;
+        if(st==='left' || st==='kicked') problems.push(`${t.label}: бот @${me.result.username} не состоит в ${type==='channel'?'канале':'группе'}`);
+        else if(type==='channel' && st!=='administrator' && st!=='creator') problems.push(`${t.label}: бот @${me.result.username} не администратор канала`);
+        else if(st==='administrator' && m.result.can_post_messages===false && type==='channel') problems.push(`${t.label}: у бота нет права «Публикация сообщений»`);
+        else if(st==='restricted' && m.result.can_send_messages===false) problems.push(`${t.label}: боту запрещено писать в группу`);
+      }
+      if(t.isTopic && type==='supergroup' && c.result && c.result.is_forum===false)
+        problems.push(`${t.label}: в группе не включены «Темы» (Управление группой → Темы)`);
+    }
+  }
+  const warn = noTarget.size ? ` Без получателя останутся товары каталогов: ${[...noTarget].slice(0,5).join(', ')}.` : '';
+  if(problems.length) return {ok:false, message:problems.join(' · ')+warn};
+  return {ok:true, bot:me.result.username, warn};
+}
+async function publishProductToTelegram(p){
+  const token = tgNormToken(State.settings.productsBotToken);
+  if(!token) return {ok:false, reason:'no-token'};
+  const targets = getPublishTargets(p);
+  if(targets.length===0){
+    const c=(State.catalogs||[]).find(x=>x.id===p.catalogId);
+    return {ok:false, reason:'no-targets', failedTargets:['Тема'], errors:[`Каталог «${c?c.name:'—'}»: не указана ссылка на тему Telegram`]};
+  }
   const photo = (p.images && p.images[0]) || null;
-  const caption = buildProductTelegramCaption(p, photo ? 1024 : 4096); // лимит Telegram разный для фото-подписи и обычного текста
-  const failedTargets = [];
+  const caption = buildProductTelegramCaption(p, photo ? 1024 : 4096);
+  const failedTargets = [], errors = [];
   let anyOk = false;
   for(const t of targets){
-    const ok = await sendTelegramPhoto(token, t.chatId, photo, caption);
-    if(ok) anyOk = true; else failedTargets.push(t.label);
+    const r = await sendTelegramPhotoEx(token, t.chatId, photo, caption, t.threadId);
+    if(r.ok) anyOk = true; else { failedTargets.push(t.label); errors.push(`${t.label}: ${tgHumanError(r.description)}`); console.warn('Publish failed', t, r.description); }
   }
-  return {ok:anyOk, anyOk, failedTargets};
+  return {ok:anyOk, anyOk, failedTargets, errors};
 }
 /* ============ РУЧНАЯ МАССОВАЯ ПУБЛИКАЦИЯ ТОВАРОВ (Админка → Товары → «Публикация товаров») ============ */
 function ppFillSubcatalogSelect(){
@@ -5706,18 +5838,31 @@ $('#ppPublishBtn').addEventListener('click', async ()=>{
   if(!State.settings.productsBotToken){ toast('Бот для публикации не настроен', 'Профиль → Telegram-бот → «Бот для публикации товаров»', 'fa-circle-exclamation'); return; }
   const btn = $('#ppPublishBtn'); btn.disabled = true;
   const progress = $('#ppProgress'); progress.style.display = 'block';
-  let okCount = 0; const failParts = new Set();
+  progress.textContent = 'Проверка настроек бота…';
+  const selProducts = ids.map(id=>State.products.find(pp=>pp.id===id)).filter(Boolean);
+  const chk = await checkPublishSetup(selProducts);
+  if(!chk.ok){
+    btn.disabled = false; progress.style.display = 'none'; progress.textContent = '';
+    toast('Публикация невозможна', chk.message, 'fa-triangle-exclamation');
+    return;
+  }
+  let okCount = 0; const failParts = new Set(); const errSet = new Set();
+  let consecutiveFails = 0;
   for(let i=0;i<ids.length;i++){
     const p = State.products.find(pp=>pp.id===ids[i]);
     if(!p) continue;
     progress.textContent = `Публикация ${i+1} из ${ids.length}: ${p.name}`;
     const r = await publishProductToTelegram(p);
-    if(r && r.anyOk) okCount++;
+    if(r && r.anyOk){ okCount++; consecutiveFails = 0; } else consecutiveFails++;
     if(r && r.failedTargets) r.failedTargets.forEach(t=>failParts.add(t));
+    if(r && r.errors) r.errors.forEach(e=>errSet.add(e));
+    if(consecutiveFails>=5) break; // не гоним сотни запросов впустую
+    if(i<ids.length-1) await _sleep(1500); // лимит Telegram ~20 сообщений/мин в канал
   }
   btn.disabled = false; progress.style.display = 'none'; progress.textContent = '';
   if(failParts.size>0){
-    toast('Публикация завершена с ошибками', `Успешно: ${okCount} из ${ids.length}. Не удалось: ${[...failParts].join(', ')}`, 'fa-triangle-exclamation');
+    const why = [...errSet].slice(0,2).join(' · ');
+    toast('Публикация завершена с ошибками', `Успешно: ${okCount} из ${ids.length}. ${why || ('Не удалось: '+[...failParts].join(', '))}`, 'fa-triangle-exclamation');
   } else {
     toast('Готово', `Опубликовано товаров: ${okCount} из ${ids.length}`, 'fa-circle-check');
   }
@@ -16240,6 +16385,11 @@ function renderAdminCatList(){
         </div>
         <button class="tiny-btn danger" data-delcat="${c.id}">Удалить</button>
       </div>
+      <div style="display:flex;align-items:center;gap:8px;margin:0 0 8px;">
+        <i class="fa-brands fa-telegram" style="color:#229ED9;flex-shrink:0;"></i>
+        <input data-cattopic="${c.id}" value="${String(c.tgTopicLink||'').replace(/"/g,'&quot;')}" placeholder="Ссылка на тему Telegram (t.me/c/…/5)" style="flex:1;min-width:0;padding:8px 10px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface);font-size:12.5px;">
+        <span data-cattopicok="${c.id}" style="font-size:13px;flex-shrink:0;">${c.tgTopicLink ? (parseTopicLink(c.tgTopicLink)?'✅':'⚠️') : ''}</span>
+      </div>
       <div>${subs.map(s=>`<span class="subcat-chip" style="display:inline-flex;align-items:center;gap:6px;">
           <label class="cat-thumb-edit sm" title="Изменить иконку">${s.image?`<img src="${s.image}">`:`<i class="fa-solid fa-image"></i>`}<input type="file" accept="image/*" class="hidden" data-subimginput="${s.id}"></label>
           ${s.name} <i class="fa-solid fa-pen" data-editsub="${s.id}" data-subname="${s.name.replace(/"/g,'&quot;')}" style="color:var(--text-dim);font-size:10px;cursor:pointer;padding:2px;"></i>
@@ -16257,6 +16407,17 @@ function renderAdminCatList(){
   }).join('') || '<div class="empty-state"><i class="fa-solid fa-folder-open"></i></div>';
   wrap.querySelectorAll('[data-delcat]').forEach(b=>b.addEventListener('click', ()=>{
     if(confirm('Удалить каталог? Подкаталоги внутри него тоже будут удалены.')) hzDelAnim(b).then(()=>db.collection('catalogs').doc(b.getAttribute('data-delcat')).delete());
+  }));
+  wrap.querySelectorAll('[data-cattopic]').forEach(inp=>inp.addEventListener('change', async ()=>{
+    const catId = inp.getAttribute('data-cattopic');
+    const val = inp.value.trim();
+    const ok = $('[data-cattopicok="'+catId+'"]');
+    if(val && !parseTopicLink(val)){ if(ok) ok.textContent='⚠️'; toast('Неверная ссылка на тему','Пример: https://t.me/c/1234567890/5','fa-circle-exclamation'); return; }
+    try{
+      await db.collection('catalogs').doc(catId).set({tgTopicLink:val}, {merge:true});
+      if(ok) ok.textContent = val ? '✅' : '';
+      toast(val?'Тема привязана к каталогу':'Привязка темы удалена','','fa-circle-check');
+    }catch(e){ console.warn(e); toast('Не удалось сохранить','','fa-circle-exclamation'); }
   }));
   wrap.querySelectorAll('[data-editcat]').forEach(b=>b.addEventListener('click', async ()=>{
     const catId = b.getAttribute('data-editcat');
