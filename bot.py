@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-KORVON.SHOP — Telegram-бот (Railway).
+KORVON.SHOP — Telegram-бот (BotHost.ru).
 
 1) Код подтверждения при регистрации: приложение открывает t.me/<бот>?start=v...,
    бот присылает 6-значный код и кладёт в Firestore tgSessions/<токен> {chatId, codeHash}.
@@ -15,7 +15,8 @@ KORVON.SHOP — Telegram-бот (Railway).
 (ключ Firebase — в переменной FIREBASE_CREDENTIALS_JSON или файлом firebase.json рядом с bot.py).
 Без PUBLIC_URL (нет публичного https-адреса) селфи на последнем шаге верификации принимается обычным фото в чате.
 
-Переменные окружения (Railway → Variables):
+Переменные окружения (BotHost → Переменные):
+  PUBLIC_URL                  (необязательно) https-адрес бота для камеры-Mini App; SELFIE_MODE=chat — селфи только фото в чате
   BOT_TOKEN                   токен бота (тот же, что «Бот регистрации» в админке приложения)
   FIREBASE_CREDENTIALS_JSON   JSON сервисного аккаунта целиком (или его base64)
   ADMIN_IDS                   Telegram ID админов через запятую (необязательно: иначе берётся adminBotChatId из settings/main)
@@ -71,6 +72,10 @@ if PUBLIC_URL:
     # Telegram принимает для кнопки Mini App только https://. Без схемы или с http:// кнопка отклоняется,
     # и бот после 7-го шага «молчит» — поэтому приводим адрес к https:// принудительно.
     PUBLIC_URL = "https://" + re.sub(r"^https?://", "", PUBLIC_URL, flags=re.I).rstrip("/")
+# Режим селфи: Mini App с камерой работает только при публичном https-адресе (PUBLIC_URL).
+# Если на BotHost адреса нет или камера в Telegram не открывается — клиент всегда может отправить селфи обычным фото в чат.
+# SELFIE_MODE=chat — принудительно только фото в чате (без Mini App).
+USE_WEBAPP = bool(PUBLIC_URL) and os.environ.get("SELFIE_MODE", "").strip().lower() != "chat"
 BANK = "horizon_bank"  # технический id чата в Firestore — не менять (иначе потеряются старые переписки)
 DEFAULT_LIMIT = 500
 PROVIDER = "KORVON.SHOP кредит"      # значение, которое сайт пишет в заказ
@@ -441,24 +446,26 @@ def selfie_markup():
     return {"inline_keyboard": [[{"text": "✅ Пройти аутентификацию", "web_app": {"url": PUBLIC_URL + "/selfie"}}]]}
 
 
+SELFIE_CHAT_TEXT = ("✅ Паспорт принят.\n\n8️⃣ Последний шаг — <b>селфи</b>.\n"
+                    "Сделайте фото своего лица камерой телефона (при хорошем освещении, без очков и головного убора) "
+                    "и отправьте его сюда <b>обычным фото</b> (не файлом).")
+
+
 def kyc_ask(chat, step):
-    if step == "selfie" and not PUBLIC_URL:
-        # У сервиса нет публичного https-адреса — Mini App с камерой недоступен. Принимаем селфи обычным фото в чате.
-        return say(chat, "✅ Паспорт принят.\n\n8️⃣ Последний шаг — <b>селфи</b>.\n"
-                         "Сделайте фото своего лица камерой телефона (при хорошем освещении, без очков и головного убора) и отправьте его сюда.")
+    if step == "selfie" and not USE_WEBAPP:
+        return say(chat, SELFIE_CHAT_TEXT)
     if step == "selfie":
         r = say(chat, "✅ Паспорт принят.\n\n8️⃣ Последний шаг — <b>аутентификация</b>.\n"
                       "Нажмите кнопку «Пройти аутентификацию»: откроется камера прямо в Telegram. "
-                      "Сделайте фото лица, проверьте его и нажмите «Отправить» — фото сразу придёт в бот.\n"
-                      "Фото из галереи загрузить нельзя.", reply_markup=selfie_markup())
+                      "Сделайте фото лица, проверьте его и нажмите «Отправить».\n\n"
+                      "📷 Если камера не открывается — просто отправьте селфи сюда обычным фото.", reply_markup=selfie_markup())
         if not r:
-            # Telegram не принял кнопку (чаще всего PUBLIC_URL пустой/не https/не открывается) — не молчим
-            log.error("Не удалось отправить кнопку Mini App. PUBLIC_URL=%r — проверьте переменную PUBLIC_URL (https://ваш-домен) в Railway", PUBLIC_URL)
-            say(chat, "⚠️ Не удалось открыть камеру для аутентификации. Мы уже сообщили администратору — попробуйте ещё раз чуть позже "
-                      "(напишите любое сообщение, и кнопка отправится снова).")
-            for a in kyc_admins():
-                say(a, "⚠️ <b>Верификация не может открыть камеру</b>: Telegram отклонил кнопку Mini App.\nPUBLIC_URL = <code>%s</code>\n"
-                       "Проверьте, что в Railway задан PUBLIC_URL вида https://ваш-домен.up.railway.app и у сервиса включён публичный домен." % esc(PUBLIC_URL or "не задан"))
+            # Telegram не принял кнопку (PUBLIC_URL не https / не открывается) — клиент не остаётся без пути: просим фото в чат
+            log.error("Не удалось отправить кнопку Mini App. PUBLIC_URL=%r — проверьте PUBLIC_URL (https://ваш-домен) на BotHost", PUBLIC_URL)
+            r = say(chat, SELFIE_CHAT_TEXT)
+            notify_admins("<b>Верификация: кнопка камеры не отправилась</b>, клиенту предложено селфи обычным фото.\n"
+                          "PUBLIC_URL = <code>%s</code>\nЧтобы убрать кнопку совсем, задайте на BotHost переменную SELFIE_MODE=chat." % esc(PUBLIC_URL or "не задан"),
+                          key="miniapp_btn")
         return r
     say(chat, KYC_Q[step])
 
@@ -483,15 +490,16 @@ def kyc_message(m, sess):
     text = (m.get("text") or "").strip()
     data = sess.get("data") or {}
     ref = db.collection("kycSessions").document(str(chat))
-    if step == "selfie" and not PUBLIC_URL:
+    if step == "selfie":
+        # селфи обычным фото принимаем ВСЕГДА (запасной путь, если камера Mini App недоступна)
         if m.get("photo"):
             if kyc_finalize(chat, None, m["photo"][-1]["file_id"]):
                 return
             return say(chat, "Не удалось принять фото. Напишите /continue и попробуйте ещё раз.")
+        if USE_WEBAPP:
+            return say(chat, "Остался последний шаг — нажмите «Пройти аутентификацию» ниже или отправьте селфи сюда обычным фото 🤳.",
+                       reply_markup=selfie_markup())
         return say(chat, "Отправьте селфи обычным фото 🤳 (не файлом).")
-    if step == "selfie":
-        return say(chat, "Остался последний шаг — нажмите «Пройти аутентификацию» ниже, откроется камера. Фото из галереи не принимается.",
-                   reply_markup=selfie_markup())
     if step in ("pass_front", "pass_back"):
         fid = None
         if m.get("photo"):
@@ -541,6 +549,8 @@ def kyc_finalize(uid, jpeg, selfie_fid=None):
     ref = db.collection("kycSessions").document(str(uid))
     sess = ref.get().to_dict() or {}
     if sess.get("step") != "selfie":
+        return False
+    if not jpeg and not selfie_fid:
         return False
     oid, d = sess["orderId"], sess.get("data") or {}
     o = db.collection("orders").document(oid).get().to_dict() or {}
@@ -1427,7 +1437,7 @@ def promo_preview(chat, arg):
     send_promo_to(chat, promo_message(hook, p, "+992", rates), promo_markup(pid, rates), promo_photo(p))
     say(chat, "👆 Так клиенты увидят рассылку о товаре «%s». Текст: %s." % (
         esc(p.get("name")), "написал ИИ" if how == "ai" else "обычный шаблон (ИИ недоступен — проверьте ANTHROPIC_API_KEY)")
-        + ("" if rates.get("site") else "\n⚠️ Кнопки «Смотреть на сайте» нет: не задан SITE_URL (Railway → Variables)."))
+        + ("" if rates.get("site") else "\n⚠️ Кнопки «Смотреть на сайте» нет: не задан SITE_URL (переменные на BotHost)."))
 
 
 # ---------- команды клиента ----------
@@ -1541,7 +1551,7 @@ def main():
     tg("deleteWebhook")
     start_background()
     log.info("Бот запущен. Админы: %s", admin_ids())
-    notify_admins("Бот запущен. Если вы его не обновляли — значит он перезапустился после сбоя (причину ищите в Logs на Railway).", key="start", every=0, icon="🔄")
+    notify_admins("Бот запущен. Если вы его не обновляли — значит он перезапустился после сбоя (причину ищите в логах на BotHost).", key="start", every=0, icon="🔄")
     offset = None
     fails = 0
     while True:
