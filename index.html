@@ -3309,7 +3309,7 @@ body:not([data-theme="dark"]) .ss-avatar > *{background:linear-gradient(145deg,#
 <div class="overlay center" id="ovPublishProducts">
   <div class="sheet" style="border-radius:24px;max-height:88vh;">
     <div class="sheet-title">Публикация товаров <button class="close-x" data-close="ovPublishProducts"><i class="fa-solid fa-xmark"></i></button></div>
-    <p style="color:var(--text-dim);font-size:12px;margin-top:-8px;">Отметьте товары и нажмите «Опубликовать» — карточки с фото, названием, артикулом, ценой и ссылкой на товар уйдут в канал и/или бот, настроенные в Профиль → Telegram-бот → «Бот для публикации товаров», а также в тему группы, привязанную к каталогу товара (Админка → Каталоги).</p>
+    <p style="color:var(--text-dim);font-size:12px;margin-top:-8px;">Отметьте товары и нажмите «Опубликовать» — карточки с фото, названием, артикулом, ценой и ссылкой на товар уйдут в канал и/или бот, настроенные в Профиль → Telegram-бот → «Бот для публикации товаров», а также в тему группы, привязанную к подкаталогу или каталогу товара (Админка → Каталоги).</p>
     <div class="field-row" style="gap:8px;">
       <div class="field" style="margin-bottom:0;"><label>Каталог</label><select id="ppCatalog"><option value="">Все каталоги</option></select></div>
       <div class="field" style="margin-bottom:0;"><label>Подкаталог</label><select id="ppSubcatalog"><option value="">Все подкаталоги</option></select></div>
@@ -5733,8 +5733,11 @@ function getPublishTargets(p){
   // Тема группы, назначенная каталогу товара (Админка → Каталоги → поле «Тема Telegram»)
   if(p){
     const cat = (State.catalogs||[]).find(c=>c.id===p.catalogId);
-    const tp = cat && parseTopicLink(cat.tgTopicLink);
-    if(tp) targets.push({label:'Тема «'+cat.name+'»', chatId:tp.chatId, threadId:tp.threadId, isTopic:true});
+    // Сначала тема подкаталога товара; если у подкаталога темы нет — тема каталога
+    const sub = p.subcatalogId ? (State.subcatalogs||[]).find(x=>x.id===p.subcatalogId) : null;
+    const stp = sub && parseTopicLink(sub.tgTopicLink);
+    const tp = stp || (cat && parseTopicLink(cat.tgTopicLink));
+    if(tp) targets.push({label:'Тема «'+((stp?sub:cat).name)+'»', chatId:tp.chatId, threadId:tp.threadId, isTopic:true});
   }
   return targets;
 }
@@ -16390,14 +16393,19 @@ function renderAdminCatList(){
         <input data-cattopic="${c.id}" value="${String(c.tgTopicLink||'').replace(/"/g,'&quot;')}" placeholder="Ссылка на тему Telegram (t.me/c/…/5)" style="flex:1;min-width:0;padding:8px 10px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface);font-size:12.5px;">
         <span data-cattopicok="${c.id}" style="font-size:13px;flex-shrink:0;">${c.tgTopicLink ? (parseTopicLink(c.tgTopicLink)?'✅':'⚠️') : ''}</span>
       </div>
-      <div>${subs.map(s=>`<span class="subcat-chip" style="display:inline-flex;align-items:center;gap:6px;">
+      <div>${subs.map(s=>`<div style="margin-bottom:6px;"><span class="subcat-chip" style="display:inline-flex;align-items:center;gap:6px;">
           <label class="cat-thumb-edit sm" title="Изменить иконку">${s.image?`<img src="${s.image}">`:`<i class="fa-solid fa-image"></i>`}<input type="file" accept="image/*" class="hidden" data-subimginput="${s.id}"></label>
           ${s.name} <i class="fa-solid fa-pen" data-editsub="${s.id}" data-subname="${s.name.replace(/"/g,'&quot;')}" style="color:var(--text-dim);font-size:10px;cursor:pointer;padding:2px;"></i>
           <select class="subcat-move-select" data-movesub="${s.id}" title="Переместить в другой каталог">
             ${State.catalogs.map(cc=>`<option value="${cc.id}" ${cc.id===s.catalogId?'selected':''}>${cc.name}</option>`).join('')}
           </select>
           <span data-delsub="${s.id}" style="color:var(--danger);cursor:pointer;">✕</span>
-        </span>`).join('') || '<span style="color:var(--text-dim);font-size:12px;">Подкаталогов пока нет</span>'}</div>
+        </span>
+        <div style="display:flex;align-items:center;gap:8px;margin:4px 0 0 6px;">
+          <i class="fa-brands fa-telegram" style="color:#229ED9;flex-shrink:0;font-size:12px;"></i>
+          <input data-subtopic="${s.id}" value="${String(s.tgTopicLink||'').replace(/"/g,'&quot;')}" placeholder="Тема для «${String(s.name).replace(/"/g,'&quot;')}» (пусто — тема каталога)" style="flex:1;min-width:0;padding:6px 9px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface);font-size:12px;">
+          <span data-subtopicok="${s.id}" style="font-size:12px;flex-shrink:0;">${s.tgTopicLink ? (parseTopicLink(s.tgTopicLink)?'✅':'⚠️') : ''}</span>
+        </div></div>`).join('') || '<span style="color:var(--text-dim);font-size:12px;">Подкаталогов пока нет</span>'}</div>
       <div class="field-row" style="margin-top:8px;align-items:center;">
         <label class="cat-thumb-edit sm" id="newSubImgWrap-${c.id}" title="Иконка подкаталога">${pendingNewSubImg[c.id]?`<img src="${pendingNewSubImg[c.id]}">`:`<i class="fa-solid fa-image"></i>`}<input type="file" accept="image/*" class="hidden" data-newsubimg="${c.id}"></label>
         <input placeholder="Новый подкаталог" data-newsub="${c.id}" style="flex:1;padding:8px 10px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface);">
@@ -16417,6 +16425,17 @@ function renderAdminCatList(){
       await db.collection('catalogs').doc(catId).set({tgTopicLink:val}, {merge:true});
       if(ok) ok.textContent = val ? '✅' : '';
       toast(val?'Тема привязана к каталогу':'Привязка темы удалена','','fa-circle-check');
+    }catch(e){ console.warn(e); toast('Не удалось сохранить','','fa-circle-exclamation'); }
+  }));
+  wrap.querySelectorAll('[data-subtopic]').forEach(inp=>inp.addEventListener('change', async ()=>{
+    const subId = inp.getAttribute('data-subtopic');
+    const val = inp.value.trim();
+    const ok = $('[data-subtopicok="'+subId+'"]');
+    if(val && !parseTopicLink(val)){ if(ok) ok.textContent='⚠️'; toast('Неверная ссылка на тему','Пример: https://t.me/c/1234567890/5','fa-circle-exclamation'); return; }
+    try{
+      await db.collection('subcatalogs').doc(subId).set({tgTopicLink:val}, {merge:true});
+      if(ok) ok.textContent = val ? '✅' : '';
+      toast(val?'Тема привязана к подкаталогу':'Привязка темы подкаталога удалена','','fa-circle-check');
     }catch(e){ console.warn(e); toast('Не удалось сохранить','','fa-circle-exclamation'); }
   }));
   wrap.querySelectorAll('[data-editcat]').forEach(b=>b.addEventListener('click', async ()=>{
