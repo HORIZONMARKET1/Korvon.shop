@@ -11,6 +11,10 @@ KORVON.SHOP — Telegram-бот (Railway).
    Бот присылает товары, итог и реквизиты → клиент шлёт чек → админу уходит чек
    с кнопками «Подтвердить / Отказ» → при подтверждении orders/<id>.paid = true, status = «Оплачено».
 
+Запуск на любом хостинге: переменные можно задать в панели хостинга ИЛИ в файле .env рядом с bot.py
+(ключ Firebase — в переменной FIREBASE_CREDENTIALS_JSON или файлом firebase.json рядом с bot.py).
+Без PUBLIC_URL (нет публичного https-адреса) селфи на последнем шаге верификации принимается обычным фото в чате.
+
 Переменные окружения (Railway → Variables):
   BOT_TOKEN                   токен бота (тот же, что «Бот регистрации» в админке приложения)
   FIREBASE_CREDENTIALS_JSON   JSON сервисного аккаунта целиком (или его base64)
@@ -30,6 +34,30 @@ from firebase_admin import credentials, firestore
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 log = logging.getLogger("korvon-bot")
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+
+
+def load_dotenv():
+    """Хостинги без раздела переменных: читаем файл .env рядом с bot.py (строки вида ИМЯ=значение).
+    Уже заданные переменные окружения не перезаписываются. Файл .env не должен попадать в GitHub (см. .gitignore)."""
+    p = os.path.join(HERE, ".env")
+    if not os.path.isfile(p):
+        return
+    with open(p, encoding="utf-8-sig") as f:
+        for line in f:
+            line = line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            k, v = line.split("=", 1)
+            k, v = k.strip(), v.strip()
+            if len(v) >= 2 and v[0] == v[-1] and v[0] in "\"'":
+                v = v[1:-1]
+            if k and k not in os.environ:
+                os.environ[k] = v
+
+
+load_dotenv()
 
 TOKEN = os.environ.get("BOT_TOKEN", "").strip()
 CARD = os.environ.get("CARD_NUMBER", "4444 8888 1227 1025").strip()
@@ -57,7 +85,15 @@ if not TOKEN:
 
 raw = os.environ.get("FIREBASE_CREDENTIALS_JSON", "").strip()
 if not raw:
-    raise SystemExit("Не задан FIREBASE_CREDENTIALS_JSON")
+    # запасной вариант: файл ключа сервисного аккаунта рядом с bot.py (загрузите его на хостинг вручную, не в GitHub)
+    for _name in ("firebase.json", "serviceAccount.json", "firebase-credentials.json"):
+        _p = os.path.join(HERE, _name)
+        if os.path.isfile(_p):
+            with open(_p, encoding="utf-8") as _f:
+                raw = _f.read().strip()
+            break
+if not raw:
+    raise SystemExit("Не задан FIREBASE_CREDENTIALS_JSON (и нет файла firebase.json рядом с bot.py)")
 if not raw.lstrip().startswith("{"):
     raw = base64.b64decode(raw).decode("utf-8")
 firebase_admin.initialize_app(credentials.Certificate(json.loads(raw)))
@@ -406,6 +442,10 @@ def selfie_markup():
 
 
 def kyc_ask(chat, step):
+    if step == "selfie" and not PUBLIC_URL:
+        # У сервиса нет публичного https-адреса — Mini App с камерой недоступен. Принимаем селфи обычным фото в чате.
+        return say(chat, "✅ Паспорт принят.\n\n8️⃣ Последний шаг — <b>селфи</b>.\n"
+                         "Сделайте фото своего лица камерой телефона (при хорошем освещении, без очков и головного убора) и отправьте его сюда.")
     if step == "selfie":
         r = say(chat, "✅ Паспорт принят.\n\n8️⃣ Последний шаг — <b>аутентификация</b>.\n"
                       "Нажмите кнопку «Пройти аутентификацию»: откроется камера прямо в Telegram. "
@@ -431,8 +471,6 @@ def kyc_start(chat, user, oid):
         return say(chat, "✅ Вы уже верифицированы — повторно проходить не нужно.")
     if o.get("creditStatus") in ("review", "approved"):
         return say(chat, "Ваша заявка уже %s." % ("на проверке" if o.get("creditStatus") == "review" else "одобрена"))
-    if not PUBLIC_URL:
-        return say(chat, "Верификация временно недоступна. Попробуйте позже.")
     db.collection("kycSessions").document(str(chat)).set({"orderId": oid, "clientId": o.get("clientId"), "step": "fio", "data": {}, "username": user.get("username") or "",
                                                             "updatedAt": int(time.time() * 1000), "remind": 0})
     say(chat, "🏦 <b>Верификация KORVON.SHOP BANK</b>\nОтвечайте на вопросы по одному. Отмена: /cancel")
@@ -445,6 +483,12 @@ def kyc_message(m, sess):
     text = (m.get("text") or "").strip()
     data = sess.get("data") or {}
     ref = db.collection("kycSessions").document(str(chat))
+    if step == "selfie" and not PUBLIC_URL:
+        if m.get("photo"):
+            if kyc_finalize(chat, None, m["photo"][-1]["file_id"]):
+                return
+            return say(chat, "Не удалось принять фото. Напишите /continue и попробуйте ещё раз.")
+        return say(chat, "Отправьте селфи обычным фото 🤳 (не файлом).")
     if step == "selfie":
         return say(chat, "Остался последний шаг — нажмите «Пройти аутентификацию» ниже, откроется камера. Фото из галереи не принимается.",
                    reply_markup=selfie_markup())
@@ -492,7 +536,8 @@ def send_bytes_photo(chat, jpeg, caption, markup=None):
         log.warning("sendPhoto: %s", e)
 
 
-def kyc_finalize(uid, jpeg):
+def kyc_finalize(uid, jpeg, selfie_fid=None):
+    """Завершение верификации: селфи пришло либо байтами (Mini App), либо file_id фото из чата (без Mini App)."""
     ref = db.collection("kycSessions").document(str(uid))
     sess = ref.get().to_dict() or {}
     if sess.get("step") != "selfie":
@@ -508,7 +553,7 @@ def kyc_finalize(uid, jpeg):
         esc(oid), esc(o.get("clientName")), esc(o.get("clientPhone")), esc(d.get("fio")), esc(d.get("dob")), esc(d.get("work")),
         esc(d.get("phone1")), esc(d.get("phone2")), esc(credit_summary(o)))
     markup = {"inline_keyboard": [[{"text": "✅ Подтвердить", "callback_data": "kok:" + oid}, {"text": "❌ Отказ", "callback_data": "kno:" + oid}]]}
-    fid = None
+    fid = selfie_fid
     for a in (kyc_admins()):
         tg("sendMediaGroup", chat_id=a, media=[{"type": "photo", "media": d.get("pass_front")}, {"type": "photo", "media": d.get("pass_back")}])
         if fid:
@@ -780,7 +825,11 @@ def start_background():
     me = tg("getMe") or {}
     BOT_USERNAME = me.get("username", "")
     port = int(os.environ.get("PORT", "8080"))
-    threading.Thread(target=ThreadingHTTPServer(("0.0.0.0", port), Web).serve_forever, daemon=True).start()
+    try:
+        threading.Thread(target=ThreadingHTTPServer(("0.0.0.0", port), Web).serve_forever, daemon=True).start()
+    except OSError as e:
+        # порт занят или недоступен на хостинге — бот всё равно работает (без страницы селфи)
+        log.warning("Веб-сервер не запущен на порту %s: %s", port, e)
     log.info("Web :%s, public=%s, bot=@%s, AI=%s", port, PUBLIC_URL or "—", BOT_USERNAME, "on" if AI_KEY else "off")
     start_watchers()
     tg("setMyCommands", commands=[
