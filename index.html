@@ -6751,6 +6751,7 @@ function loadingStateHtml(){
     <div class="loading-orb"><i class="fa-solid fa-bag-shopping"></i></div>
     <div class="loading-title">Не удалось загрузить товары</div>
     <div class="loading-sub">Проверьте интернет и попробуйте ещё раз</div>
+    ${State.productsLastError ? `<div class="loading-sub" style="font-size:11px;opacity:.75;margin-top:6px;word-break:break-word;">Код ошибки: ${String(State.productsLastError).replace(/[<>&]/g,'')}${State.productsLastError==='permission-denied' ? ' — правила Firestore запрещают чтение (проверьте Rules в Firebase Console)' : (State.productsLastError==='resource-exhausted' ? ' — исчерпан лимит Firestore' : '')}</div>` : ''}
     <button type="button" class="loading-retry" data-retry-products="1"><i class="fa-solid fa-rotate-right"></i> Повторить</button>
   </div>`;
   }
@@ -17307,12 +17308,21 @@ function hzProductsFailed(){
   filterAndRenderGrid({});
 }
 let hzProductsUnsub = null;
+let hzListenRetryT = null, hzListenRetryMs = 15000;
 function hzListenProducts(){
   try{ if(hzProductsUnsub) hzProductsUnsub(); }catch(e){}
-  hzProductsUnsub = db.collection('products').onSnapshot(hzOnProductsSnap, (err)=>{
+  hzProductsUnsub = db.collection('products').onSnapshot((snap)=>{
+    hzListenRetryMs = 15000; clearTimeout(hzListenRetryT); State.productsLastError = null;
+    hzOnProductsSnap(snap);
+  }, (err)=>{
     console.warn('products listener error', err);
-    // Слушатель упал (сеть/права) — пробуем разовый запрос напрямую с сервера
+    State.productsLastError = (err && (err.code || err.message)) || 'unknown';
+    // Слушатель упал (сеть/права/лимит) — пробуем разовый запрос напрямую с сервера
     hzFetchProductsOnce();
+    // Firestore НЕ перезапускает упавший слушатель сам — перезапускаем вручную с нарастающей паузой
+    clearTimeout(hzListenRetryT);
+    hzListenRetryT = setTimeout(()=>{ try{ db.enableNetwork(); }catch(e){} hzListenProducts(); }, hzListenRetryMs);
+    hzListenRetryMs = Math.min(hzListenRetryMs*2, 120000);
   });
 }
 // Разовая загрузка с сервера — запасной путь, если живой слушатель завис или не стартовал
@@ -17321,6 +17331,7 @@ function hzFetchProductsOnce(){
     if(State.firstProductsLoad || snap.docs.length) hzOnProductsSnap(snap);
   }).catch(err=>{
     console.warn('products one-shot fetch failed', err);
+    State.productsLastError = (err && (err.code || err.message)) || State.productsLastError || 'unknown';
     return db.collection('products').get().then(snap=>{
       if(State.firstProductsLoad && (snap.docs.length || !snap.metadata.fromCache)) hzOnProductsSnap(snap);
     }).catch(()=>{});
