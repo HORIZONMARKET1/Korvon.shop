@@ -4021,7 +4021,7 @@ function startApp(){
 
 /* ============ FIREBASE INIT ============ */
 const db = firebase.firestore();
-try{ db.settings({experimentalAutoDetectLongPolling:true, merge:true}); }catch(e){ console.warn('firestore settings', e); }
+try{ db.settings({experimentalForceLongPolling:true, useFetchStreams:false, merge:true}); }catch(e){ console.warn('firestore settings', e); }
 const storage = firebase.storage();
 try{ storage.setMaxUploadRetryTime(15000); storage.setMaxOperationRetryTime(8000); }catch(e){} // если Storage не включён — не зависаем на минуты, а быстро возвращаемся к сохранению фото внутри товара
 let hzStorageDown = false;
